@@ -9,3 +9,17 @@ services:
     ports:
       - 8080:8080
     tty: true #コンテナが起動し続けるように指定
+
+  db:
+    build:
+      context: .
+      dockerfile: ./docker/mysql/Dockerfile
+    container_name: mysql_container
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: test
+      MYSQL_PASSWORD: test
+    volumes:
+      - ./mysql:/docker-entrypoint-initdb.d
