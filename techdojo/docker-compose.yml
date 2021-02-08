@@ -1,25 +1,24 @@
-version: '3'
-
+version: "3" # composeファイルのバージョン
 services:
-  go:
-    build:
-      context: .
-      dockerfile: ./docker/go/Dockerfile
-    container_name: go_container
-    ports:
-      - 8080:8080
-    tty: true #コンテナが起動し続けるように指定
+    app: # サービス名
+        build: . # ビルドに使うDockerfileの場所
+        tty: true # コンテナの永続化
+        ports: # ホストOSのポートとコンテナのポートをつなげる
+            - "8080:8080"
+        volumes:
+            - ./app:/go/src/app # マウントディレクトリ
+        depends_on:
+            - mysql
 
-  db:
-    build:
-      context: .
-      dockerfile: ./docker/mysql/Dockerfile
-    container_name: mysql_container
-    ports:
-      - 3306:3306
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_USER: test
-      MYSQL_PASSWORD: test
-    volumes:
-      - ./mysql:/docker-entrypoint-initdb.d
+    mysql:
+      build: ./mysql/
+      volumes:
+        # 初期データを投入するSQLが格納されているdir
+            - ./mysql/init:/docker-entrypoint-initdb.d
+        # 永続化するときにマウントするdir
+            - ./mysql/data:/var/lib/mysql
+      environment:
+        - MYSQL_ROOT_PASSWORD=golang
+      ports:
+        - "33061:3306"
+      command: --default-authentication-plugin=mysql_native_password
