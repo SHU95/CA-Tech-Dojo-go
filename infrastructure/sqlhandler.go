@@ -17,7 +17,7 @@ const (
 	DBMS     = "mysql"
 	USER     = "user"
 	PASS     = "go-user"
-	PROTOCOL = "tcp(db-container:3306)"
+	PROTOCOL = "tcp(mysql-db:3306)"
 	DBNAME   = "go_api"
 )
 
